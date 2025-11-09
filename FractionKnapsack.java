@@ -48,3 +48,7 @@ public class FractionKnapsack {
         System.out.println("Maximum value in knapsack = " + totalValue);
     }
 }
+/*Time Complexity = O(n log n)
+ Space Complexity = O(n)
+ */
+
