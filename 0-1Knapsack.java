@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class DP_FractionKnapsack {
+public class 0-1Knapsack {
     public static int knapsack(int[] value, int[] weight, int capacity, int n) {
         int[][] dp = new int[n + 1][capacity + 1];
 
@@ -47,3 +47,4 @@ public class DP_FractionKnapsack {
         sc.close();
     }
 }
+
