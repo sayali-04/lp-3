@@ -1,15 +1,15 @@
 import java.util.*;
 
-class RecursiveandNonRecursiveFib {
+class RecursiveandNonRecursiveFib { 
 
-    // Recursive Fibonacci function
+    // Recursive Fibonacci function  TC:O(2^n)  SP: O(N)
     static int rfibonacci(int n) {
         if (n <= 1)
             return n; // Base case
         return rfibonacci(n - 1) + rfibonacci(n - 2); 
     }
 
-    // Non-Recursive (Iterative) Fibonacci function
+    // Non-Recursive (Iterative) Fibonacci function   TC:O(N)  SP: O(1)
     static void nRfibonacci(int n) {
         int a = 0, b = 1, c;
         System.out.println("\nFibonacci series using iteration:");
