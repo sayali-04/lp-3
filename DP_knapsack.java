@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class 0-1Knapsack {
+public class DP_knapsack {
     public static int knapsack(int[] value, int[] weight, int capacity, int n) {
         int[][] dp = new int[n + 1][capacity + 1];
 
@@ -47,4 +47,5 @@ public class 0-1Knapsack {
         sc.close();
     }
 }
+
 
