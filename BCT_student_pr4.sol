@@ -9,16 +9,21 @@ contract StudentManager {
         string course;
     }
 
+    // Array to store all students
     Student[] private students;
-    mapping(uint256 => uint256) private idx;
-    uint256 public studentCount;
 
+    // Mapping from student ID to index in array (index + 1)
+    mapping(uint256 => uint256) private idx;
+
+    // Counters and info for deposit tracking
+    uint256 public studentCount;
     uint256 public depositsCount;
     uint256 public lastDepositAmount;
     address public lastSender;
 
+    // Events
     event StudentAdded(uint256 indexed id, string name);
-    event StudentUpdated(uint256 indexed id);
+    event StudentUpdated(uint256 indexed id, string name, uint8 age, string course);
     event StudentRemoved(uint256 indexed id);
     event Received(address indexed from, uint256 amount);
     event FallbackCalled(address indexed from, uint256 amount, bytes data);
@@ -27,13 +32,21 @@ contract StudentManager {
         studentCount = 0;
     }
 
-    // Add a new student
-    function addStudent(string calldata _name, uint8 _age, string calldata _course) external {
-        studentCount += 1;
-        uint256 newId = studentCount;
-        students.push(Student({id: newId, name: _name, age: _age, course: _course}));
-        idx[newId] = students.length; // store index + 1
-        emit StudentAdded(newId, _name);
+    // Add a new student (now user provides the ID)
+    function addStudent(
+        uint256 _id,
+        string calldata _name,
+        uint8 _age,
+        string calldata _course
+    ) external {
+        require(_id != 0, "Invalid ID");
+        require(idx[_id] == 0, "Student ID already exists");
+
+        students.push(Student({id: _id, name: _name, age: _age, course: _course}));
+        idx[_id] = students.length; // index + 1
+        studentCount++;
+
+        emit StudentAdded(_id, _name);
     }
 
     // Get details of a specific student
@@ -48,25 +61,34 @@ contract StudentManager {
         return students;
     }
 
-    // Update existing student details
-    function updateStudent(uint256 _id, string calldata _name, uint8 _age, string calldata _course) external {
+    // Update existing student details using ID
+    function updateStudent(
+        uint256 _id,
+        string calldata _name,
+        uint8 _age,
+        string calldata _course
+    ) external {
         uint256 i = idx[_id];
         require(i != 0, "Student not found");
+
         Student storage s = students[i - 1];
         s.name = _name;
         s.age = _age;
         s.course = _course;
-        emit StudentUpdated(_id);
+
+        emit StudentUpdated(_id, _name, _age, _course);
     }
 
     // Remove a student by ID
     function removeStudent(uint256 _id) external {
         uint256 i = idx[_id];
         require(i != 0, "Student not found");
+
         uint256 arrayIndex = i - 1;
         uint256 lastIndex = students.length - 1;
 
         if (arrayIndex != lastIndex) {
+            // Move last element to deleted spot
             Student memory lastStudent = students[lastIndex];
             students[arrayIndex] = lastStudent;
             idx[lastStudent.id] = arrayIndex + 1;
@@ -74,35 +96,37 @@ contract StudentManager {
 
         students.pop();
         idx[_id] = 0;
+        studentCount--;
+
         emit StudentRemoved(_id);
     }
 
-    // Accept deposits
+    // Accept deposits through deposit() function
     function deposit() external payable {
-        require(msg.value > 0, "Send ETH");
-        depositsCount += 1;
+        require(msg.value > 0, "Send ETH greater than zero");
+        depositsCount++;
         lastDepositAmount = msg.value;
         lastSender = msg.sender;
         emit Received(msg.sender, msg.value);
     }
 
-    // Receive function (when sent plain ETH)
+    // Receive plain ETH
     receive() external payable {
-        depositsCount += 1;
+        depositsCount++;
         lastDepositAmount = msg.value;
         lastSender = msg.sender;
         emit Received(msg.sender, msg.value);
     }
 
-    // Fallback function (for unknown calls)
+    // Handle unknown calls or ETH sent with data
     fallback() external payable {
-        depositsCount += 1;
+        depositsCount++;
         lastDepositAmount = msg.value;
         lastSender = msg.sender;
         emit FallbackCalled(msg.sender, msg.value, msg.data);
     }
 
-    // Get number of students stored
+    // Return number of stored students
     function getStudentsLength() external view returns (uint256) {
         return students.length;
     }
