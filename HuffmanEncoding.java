@@ -1,5 +1,6 @@
 import java.util.PriorityQueue;
-import java.util.Scanner;
+
+/* Time complexity:O(nlog n)  Space complexity:O(N) */
 
 class Node implements Comparable<Node> {
     char ch;
@@ -38,25 +39,10 @@ public class HuffmanEncoding {
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter number of characters: ");
-        int n = sc.nextInt();
-
-        char[] characters = new char[n];
-        int[] frequency = new int[n];
-
-        
-        System.out.println("Enter characters: ");
-        for (int i = 0; i < n; i++) {
-            characters[i] = sc.next().charAt(0);
-        }
-
-        
-        System.out.println("Enter their frequencies: ");
-        for (int i = 0; i < n; i++) {
-            frequency[i] = sc.nextInt();
-        }
+        // ✅ Static Input
+        char[] characters = {'A', 'B', 'C', 'D', 'E'};
+        int[] frequency = {5, 9, 12, 13, 16};
+        int n = characters.length;
 
         // Step 1: Create a priority queue (min-heap)
         PriorityQueue<Node> pq = new PriorityQueue<>();
@@ -81,9 +67,7 @@ public class HuffmanEncoding {
 
         // Step 3: Print Huffman Codes
         Node root = pq.peek();
-        System.out.println("\nHuffman Codes:");
+        System.out.println("Huffman Codes:");
         printHuffmanCodes(root, "");
-
-        sc.close();
     }
 }
